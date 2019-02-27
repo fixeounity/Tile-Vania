@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     Rigidbody2D myRigidBody;
     Animator myAnimator;
     Collider2D myCollider2D;
+    float gravityScaleAtStart;
 
     // Message then methods
     void Start()
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
         myRigidBody = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         myCollider2D = GetComponent<Collider2D>();
+        gravityScaleAtStart = myRigidBody.gravityScale;
     }
 
     // Update is called once per frame
@@ -42,11 +44,16 @@ public class Player : MonoBehaviour
         myAnimator.SetBool("isRunning", playerHasHorizontalSpeed);
     }
 
-    private void Run()
+    private void ExecuteRun()
     {
         float controlThrow = CrossPlatformInputManager.GetAxis("Horizontal");
         Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody.velocity.y);
         myRigidBody.velocity = playerVelocity;
+    }
+
+    private void Run()
+    {
+        ExecuteRun();
 
         SetupRunAnimation();
     }
@@ -63,24 +70,33 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void ExecuteClimb()
+    {
+        float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
+        Vector2 climbVelocity = new Vector2(myRigidBody.velocity.x, controlThrow * climbSpeed);
+        myRigidBody.velocity = climbVelocity;
+    }
+
     private void ClimbLadder()
     {
         bool isTouchingLadder = myCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
         SetupClimbAnimation(isTouchingLadder);
+        SetupGravityWhileClimbing(isTouchingLadder);
+
+        if (!isTouchingLadder) return;
+        ExecuteClimb();
+    }
+
+    private void SetupGravityWhileClimbing(bool isTouchingLadder)
+    {
         if (!isTouchingLadder)
         {
-            myRigidBody.gravityScale = 1;
-            return;
+            myRigidBody.gravityScale = gravityScaleAtStart;
         }
         else
         {
-            myRigidBody.gravityScale = 0;
+            myRigidBody.gravityScale = 0f;
         }
-
-
-        float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
-        Vector2 climbVelocity = new Vector2(myRigidBody.velocity.x, controlThrow * climbSpeed);
-        myRigidBody.velocity = climbVelocity;
     }
 
     private void SetupClimbAnimation(bool isTounchingLadder)
