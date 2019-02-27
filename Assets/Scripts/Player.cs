@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
 
     // Config
     [SerializeField] float runSpeed = 3f;
     [SerializeField] float jumpSpeed = 5f;
+    [SerializeField] float climbSpeed = 3f;
 
     // State
     bool isAlive = true;
@@ -18,18 +20,21 @@ public class Player : MonoBehaviour {
     Collider2D myCollider2D;
 
     // Message then methods
-	void Start () {
+    void Start()
+    {
         myRigidBody = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         myCollider2D = GetComponent<Collider2D>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         Run();
+        ClimbLadder();
         FlipSprite();
         Jump();
-	}
+    }
 
     private void SetupRunAnimation()
     {
@@ -56,6 +61,38 @@ public class Player : MonoBehaviour {
             Vector2 jumpVelocityToAdd = new Vector2(0f, jumpSpeed);
             myRigidBody.velocity += jumpVelocityToAdd;
         }
+    }
+
+    private void ClimbLadder()
+    {
+        bool isTouchingLadder = myCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
+        SetupClimbAnimation(isTouchingLadder);
+        if (!isTouchingLadder)
+        {
+            myRigidBody.gravityScale = 1;
+            return;
+        }
+        else
+        {
+            myRigidBody.gravityScale = 0;
+        }
+
+
+        float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
+        Vector2 climbVelocity = new Vector2(myRigidBody.velocity.x, controlThrow * climbSpeed);
+        myRigidBody.velocity = climbVelocity;
+    }
+
+    private void SetupClimbAnimation(bool isTounchingLadder)
+    {
+        if (!isTounchingLadder)
+        {
+            myAnimator.SetBool("isClimbing", false);
+            return;
+        }
+
+        bool playerHasVerticalSpeed = Mathf.Abs(myRigidBody.velocity.y) > Mathf.Epsilon;
+        myAnimator.SetBool("isClimbing", playerHasVerticalSpeed);
     }
 
     private void FlipSprite()
