@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] float runSpeed = 3f;
     [SerializeField] float jumpSpeed = 5f;
     [SerializeField] float climbSpeed = 3f;
+    [SerializeField] Vector2 deathKick = new Vector2(0f, 15f);
 
     // State
     bool isAlive = true;
@@ -34,6 +35,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive) return;
         Run();
         ClimbLadder();
         FlipSprite();
@@ -87,6 +89,40 @@ public class Player : MonoBehaviour
 
         if (!isTouchingLadder) return;
         ExecuteClimb();
+    }
+
+    private void DisablePlayerInput()
+    {
+        isAlive = false;
+    }
+
+    private void LaunchInTheAir()
+    {
+        myRigidBody.velocity += deathKick;
+    }
+
+    private void PlayDeathAnimation()
+    {
+        myAnimator.SetTrigger("Die");
+        LaunchInTheAir();
+    }
+
+    private void OnTriggerEnter2D(Collider2D otherCollider)
+    {
+        bool isTouchingEnemy = myRigidBody.IsTouchingLayers(LayerMask.GetMask("Enemy"));
+        if (!isTouchingEnemy) return;
+        DisablePlayerInput();
+        PlayDeathAnimation();
+        DisableAllColliders();
+    }
+
+    private void DisableAllColliders()
+    {
+        var colliders = GetComponents<Collider2D>();
+        foreach(var collider in colliders)
+        {
+            collider.enabled = false;
+        }
     }
 
     private void SetupGravityWhileClimbing(bool isTouchingLadder)
