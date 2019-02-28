@@ -17,7 +17,7 @@ TagManager:
   - Climbing
   - Player
   - Background
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -49,6 +49,9 @@ TagManager:
     locked: 0
   - name: Climbing
     uniqueID: 3956661819
+    locked: 0
+  - name: Enemy
+    uniqueID: 1371972559
     locked: 0
   - name: Player
     uniqueID: 2445378679
