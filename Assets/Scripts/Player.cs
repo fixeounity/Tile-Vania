@@ -109,8 +109,8 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D otherCollider)
     {
-        bool isTouchingEnemy = myRigidBody.IsTouchingLayers(LayerMask.GetMask("Enemy"));
-        if (!isTouchingEnemy) return;
+        bool isTouchingEnemyOrHazard = myRigidBody.IsTouchingLayers(LayerMask.GetMask("Enemy", "Hazards"));
+        if (!isTouchingEnemyOrHazard) return;
         DisablePlayerInput();
         PlayDeathAnimation();
         DisableAllColliders();
