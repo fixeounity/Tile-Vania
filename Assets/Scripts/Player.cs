@@ -107,13 +107,20 @@ public class Player : MonoBehaviour
         LaunchInTheAir();
     }
 
+    private void Die()
+    {
+        DisablePlayerInput();
+        PlayDeathAnimation();
+        DisableAllColliders();
+    }
+
     private void OnTriggerEnter2D(Collider2D otherCollider)
     {
         bool isTouchingEnemyOrHazard = myRigidBody.IsTouchingLayers(LayerMask.GetMask("Enemy", "Hazards"));
         if (!isTouchingEnemyOrHazard) return;
-        DisablePlayerInput();
-        PlayDeathAnimation();
-        DisableAllColliders();
+        Die();
+
+        FindObjectOfType<GameSession>().ProcessPlayerDeath();
     }
 
     private void DisableAllColliders()
