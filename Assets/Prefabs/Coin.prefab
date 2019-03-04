@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1472699182243526}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12.831757, y: -2.1732233, z: 0}
+  m_LocalPosition: {x: 6.472393, y: 1.8576782, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ca10f3431beb04bb60c9d54e41088d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coinPickupSFX: {fileID: 8300000, guid: 547066b29843d8f48b2e0f6243d3f9e1, type: 3}
 --- !u!212 &212940038505107030
 SpriteRenderer:
   m_ObjectHideFlags: 1
